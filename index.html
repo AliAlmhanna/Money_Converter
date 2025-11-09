@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محول العملات - مدقق</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Tahoma', sans-serif;
+      background: linear-gradient(to right, #74ebd5, #9face6);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .converter {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      transition: transform 0.3s;
+    }
+    .converter:hover {
+      transform: scale(1.02);
+    }
+    .converter h1 {
+      margin-bottom: 10px;
+      color: #007bff;
+    }
+    .converter p {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+    input:focus, select:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+    button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+    .result, .error {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    .result {
+      background: #e9ffe9;
+      border: 2px solid #34a853;
+      color: #2d662d;
+    }
+    .error {
+      background: #ffe9e9;
+      border: 2px solid #ea4335;
+      color: #662d2d;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="converter">
+    <h1><i class="fas fa-exchange-alt"></i> محول العملات</h1>
+    <p>بواسطة: علي أيسر باقر المهنا</p>
+    <input type="number" id="amount" placeholder="أدخل المبلغ" min="0" step="0.01" required>
+    <select id="fromCurrency">
+      <option value="USD">دولار أمريكي (USD)</option>
+      <option value="EUR">يورو (EUR)</option>
+      <option value="SAR">ريال سعودي (SAR)</option>
+      <option value="IQD">دينار عراقي (IQD)</option>
+      <option value="GBP">جنيه إسترليني (GBP)</option>
+      <option value="AED">درهم إماراتي (AED)</option>
+      <option value="JPY">ين ياباني (JPY)</option>
+      <option value="RUB">روبل روسي (RUB)</option>
+      <option value="CAD">دولار كندي (CAD)</option>
+      <option value="CHF">فرنك سويسري (CHF)</option>
+    </select>
+    <select id="toCurrency">
+      <option value="USD">دولار أمريكي (USD)</option>
+      <option value="EUR">يورو (EUR)</option>
+      <option value="SAR">ريال سعودي (SAR)</option>
+      <option value="IQD">دينار عراقي (IQD)</option>
+      <option value="GBP">جنيه إسترليني (GBP)</option>
+      <option value="AED">درهم إماراتي (AED)</option>
+      <option value="JPY">ين ياباني (JPY)</option>
+      <option value="RUB">روبل روسي (RUB)</option>
+      <option value="CAD">دولار كندي (CAD)</option>
+      <option value="CHF">فرنك سويسري (CHF)</option>
+    </select>
+    <button onclick="convertCurrency()">تحويل</button>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const exchangeRates = {
+      USD: 1, EUR: 0.93, SAR: 3.75, IQD: 1310, GBP: 0.82,
+      AED: 3.67, JPY: 150, RUB: 93, CAD: 1.35, CHF: 0.91
+    };
+
+    function validateInput(amount, fromCurrency, toCurrency) {
+      let errors = [];
+      if (isNaN(amount) || amount <= 0) {
+        errors.push("الرجاء إدخال مبلغ صالح وموجب.");
+      }
+      if (!exchangeRates[fromCurrency] || !exchangeRates[toCurrency]) {
+        errors.push("عملة غير مدعومة.");
+      }
+      return errors;
+    }
+
+    function convertCurrency() {
+      const messageDiv = document.getElementById('message');
+      messageDiv.innerHTML = "";
+      const amountInput = document.getElementById('amount').value.trim();
+      const fromCurrency = document.getElementById('fromCurrency').value;
+      const toCurrency = document.getElementById('toCurrency').value;
+      const amount = parseFloat(amountInput);
+      const errors = validateInput(amount, fromCurrency, toCurrency);
+      if (errors.length > 0) {
+        messageDiv.innerHTML = `<div class="error">${errors.join("<br>")}</div>`;
+        return;
+      }
+      const amountInUSD = amount / exchangeRates[fromCurrency];
+      const convertedAmount = amountInUSD * exchangeRates[toCurrency];
+      messageDiv.innerHTML = `<div class="result">${amount.toFixed(2)} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}</div>`;
+    }
+  </script>
+
+</body>
+</html>
